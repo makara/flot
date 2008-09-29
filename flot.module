@@ -1,0 +1,108 @@
+<?php
+// $Id$
+
+/**
+ * TODO
+ *
+ * Provide decent helpers for non-direct loading. 
+ *  - Capacity to use external json data
+ *  - Ability to push json data into the DOM, with a specifiable js function 
+ *    used to load it into the graph. This function could then setup 
+ *    interaction handlers for the graph.
+ * Look into the usefulness of a flotOptions object.
+ */
+
+/**
+ * Implementation of hook_theme.
+ */
+function flot_theme() {
+  return array(
+    'flot_graph' => array(
+      'arguments' => array('element' => array(), 'data' => array(), 'options' => array()),
+    ),
+  );
+}
+
+/**
+ * Main flot graphing function
+ *
+ * @param $element
+ *   An associative array to define a placeholder element. If an 'id' is 
+ *   omitted one will be generated, If no 'style' is specified and width and
+ *   height style will be added. In short you can just pass an empty array and
+ *   everything will still work. This argument is essentially optional and has
+ *   been kept as the first argument to remain consistant with flots own api.
+ * @param $data
+ *   The data series for the graph. Optional. See flot's API.txt for more 
+ *   details. This module defines the flotData class which can  be used or
+ *   extended to make generating data objects simpler.
+ * @param $options
+ *   Options to pass to flot. Optional. See flot's API.txt for more details.
+ * @param $direct
+ *   Boolean, whether data should be passed directly to an invocation of 
+ *   $.plot(). Defaults to true. Setting this to false allows usage of
+ *   custom scripts to post data to the graph.
+ *
+ * @return
+ *   The placeholder element
+ */
+function theme_flot_graph($element, $data = array(), $options = array(), $direct = true) {
+  static $n;
+  if (!isset($element['id'])) {
+    $n++;
+    $element['id'] = 'flot-auto-identfier-'. $n;
+  }
+  
+  if (!isset($element['style'])) {
+    $element['style'] = "width:100%;height:200px";
+  }
+  
+  flot_add_js();
+  
+  if (count($data)) {
+    if ($direct) {
+      $data = 'if (Drupal.jsEnabled) {
+        $(document).ready(function() {
+          $.plot($("#'.$element['id'].'"), '. drupal_to_js($data). ', '. drupal_to_js($options) .');
+        });
+      }';
+      drupal_add_js($data, 'inline');
+    }
+    else {
+      // TODO Add the data series, options, and element information to the Drupal object or DOM
+    }
+  }
+  return '<div '. drupal_attributes($element) .'> </div>';
+}
+
+/**
+ * Helper to add flot's js
+ */
+function flot_add_js() {
+  static $added;
+  if ($added !== true) {
+    drupal_set_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="'. base_path() . drupal_get_path('module', 'flot') .'/flot/excanvas.pack.js"></script><![endif]-->');
+    drupal_add_js(drupal_get_path('module', 'flot') .'/flot/jquery.flot.js');
+    $added = true;
+  }
+}
+
+/**
+* Data class for the flot API.
+*
+* Make some nested objects to keep things simple when creating a data series.
+*/
+class flotData {
+  
+  public $data;
+  public $lines;
+  public $bars;
+  public $points;
+  
+  function __construct($data) {
+    $this->data = $data;
+    $this->lines = new stdClass();
+    $this->bars = new stdClass();
+    $this->points = new stdClass();
+  }
+}
