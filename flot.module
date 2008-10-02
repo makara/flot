@@ -39,6 +39,7 @@ function flot_theme() {
  * @param $options
  *   Options to pass to flot. Optional. See flot's API.txt for more details.
  * @param $direct
+ *   NOT IMPLEMENTED!
  *   Boolean, whether data should be passed directly to an invocation of 
  *   $.plot(). Defaults to true. Setting this to false allows usage of
  *   custom scripts to post data to the graph.
@@ -63,7 +64,7 @@ function theme_flot_graph($element, $data = array(), $options = array(), $direct
     if ($direct) {
       $data = 'if (Drupal.jsEnabled) {
         $(document).ready(function() {
-          $.plot($("#'.$element['id'].'"), '. drupal_to_js($data). ', '. drupal_to_js($options) .');
+          Drupal.flot.'.str_replace('-', '_', $element['id']).' = $.plot($("#'.$element['id'].'"), '. drupal_to_js($data). ', '. drupal_to_js($options) .');
         });
       }';
       drupal_add_js($data, 'inline');
@@ -83,6 +84,8 @@ function flot_add_js() {
   if ($added !== true) {
     drupal_set_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="'. base_path() . drupal_get_path('module', 'flot') .'/flot/excanvas.pack.js"></script><![endif]-->');
     drupal_add_js(drupal_get_path('module', 'flot') .'/flot/jquery.flot.js');
+    drupal_add_js('if (Drupal.jsEnabled) { Drupal.flot = {} }', 'inline');
+    
     $added = true;
   }
 }
