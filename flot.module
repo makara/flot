@@ -39,7 +39,7 @@ function theme_flot_graph($element, $data = array(), $options = array(), $loader
   static $n;
   if (!isset($element['id'])) {
     $n++;
-    $element['id'] = 'flot-auto-identfier-'. $n;
+    $element['id'] = 'flot-auto-identifier-'. $n;
   }
 
   if (!isset($element['style'])) {
