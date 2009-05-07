@@ -2,6 +2,16 @@
 // $Id$
 
 /**
+ * Implementation of hook_views_api().
+ */
+function flot_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'flot') .'/views',
+  );
+}
+
+/**
  * Implementation of hook_theme.
  */
 function flot_theme() {
@@ -56,7 +66,7 @@ function theme_flot_graph($element, $data = array(), $options = array(), $loader
       $data = array();
     }
 
-    $data = 'if (Drupal.jsEnabled) {      
+    $data = 'if (Drupal.jsEnabled) {
       $(document).ready(function() {
         Drupal.flot.'. str_replace('-', '_', $element['id']).' = $.plot($("#'.$element['id'].'"), '. drupal_to_js($data). ', '. drupal_to_js($options) .');
         '. $extra .'
@@ -87,16 +97,110 @@ function flot_add_js() {
 * Make some nested objects to keep things simple when creating a data series.
 */
 class flotData {
-  
+
   public $data;
   public $lines;
   public $bars;
   public $points;
-  
+
   function __construct($data) {
     $this->data = $data;
     $this->lines = new stdClass();
     $this->bars = new stdClass();
     $this->points = new stdClass();
+    $this->grid = new StdClass();
+  }
+}
+
+/**
+ * Style class for the flot API.
+ *
+ * Provides some sensible defaults and helper methods for managing axes.
+ */
+class flotStyle {
+  public $colors;
+  public $grid;
+  public $lines;
+  public $bars;
+  public $points;
+
+  function __construct() {
+    $this->lines = new StdClass();
+    $this->bars = new StdClass();
+    $this->points = new StdClass();
+
+    $this->lines->show = FALSE;
+    $this->bars->show = FALSE;
+    $this->points->show = FALSE;
+
+    $this->colors = array('#666', '#999', '#ccc');
+    $this->shadowSize = 0;
+
+    $this->grid = new StdClass();
+    $this->grid->labelMargin = 0;
+    $this->grid->tickColor = '#eee';
+    $this->grid->backgroundColor = '#f8f8f8';
+    $this->grid->borderWidth = 0;
+    $this->grid->hoverable = true;
+    $this->grid->autoHighlight = true;
+    $this->grid->clickable = false;
+  }
+
+  function axis_ticks($axis = 'yaxis', $ticks = array()) {
+    if (count($ticks)) {
+      $this->{$axis} = new StdClass();
+      $this->{$axis}->ticks = $ticks;
+    }
+  }
+
+  function axis_range($axis = 'yaxis', $range = array(), $granularity = 0) {
+    if (count($range)) {
+      $this->{$axis} = new StdClass();
+      $this->{$axis}->min = min($range);
+      $this->{$axis}->max = max($range);
+
+      if (is_numeric($granularity) && $granularity != 0) {
+        $tickSize = ($this->{$axis}->max - $this->{$axis}->min) / $granularity;
+        $this->{$axis}->tickSize = floor($tickSize);
+      }
+
+      $this->{$axis}->tickDecimals = $decimals;
+    }
+  }
+}
+
+/**
+ * Basic line style class for the flot.
+ */
+class flotStyleLine extends flotStyle {
+  function __construct() {
+    parent::__construct();
+    $this->lines->show = TRUE;
+    $this->lines->lineWidth = 1;
+    $this->lines->fill = .1;
+  }
+}
+
+/**
+ * Basic bar style class for the flot.
+ */
+class flotStyleBar extends flotStyle {
+  function __construct() {
+    parent::__construct();
+    $this->bars->show = TRUE;
+    $this->bars->lineWidth = 0;
+    $this->bars->fill = .5;
+  }
+}
+
+/**
+ * Points style class for the flot.
+ */
+class flotStylePoint extends flotStyle {
+  function __construct() {
+    parent::__construct();
+    $this->points->show = TRUE;
+    $this->points->lineWidth = 1;
+    $this->points->fill = .1;
   }
 }
