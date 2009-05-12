@@ -163,8 +163,6 @@ class flotStyle {
         $tickSize = ($this->{$axis}->max - $this->{$axis}->min) / $granularity;
         $this->{$axis}->tickSize = floor($tickSize);
       }
-
-      $this->{$axis}->tickDecimals = $decimals;
     }
   }
 }

@@ -11,6 +11,6 @@
  */
 ?>
 
-<div class="views-flot <?php print $chart_type ?>">
+<div class="views-flot">
   <?php print theme('flot_graph', $element, $data, $options); ?>
 </div>
