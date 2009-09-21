@@ -83,8 +83,14 @@ function theme_flot_graph($element, $data = array(), $options = array(), $loader
 function flot_add_js() {
   static $added;
   if ($added !== true) {
-    drupal_set_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="'. base_path() . drupal_get_path('module', 'flot') .'/flot/excanvas.pack.js"></script><![endif]-->');
-    drupal_add_js(drupal_get_path('module', 'flot') .'/flot/jquery.flot.js');
+    if (module_exists('libraries') && libraries_get_path('flot')) {
+      $path = libraries_get_path('flot');
+    }
+    if (!isset($path)) {
+      $path = drupal_get_path('module', 'flot') .'/flot';
+    }
+    drupal_set_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="'. base_path() . $path . '/excanvas.pack.js"></script><![endif]-->');
+    drupal_add_js($path . '/jquery.flot.js');
     drupal_add_js('if (Drupal.jsEnabled) { Drupal.flot = {}; }', 'inline');
 
     $added = true;
