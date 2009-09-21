@@ -4,69 +4,106 @@
 /**
  * Summary style plugin for flot.
  */
-class flot_views_plugin_summary_style extends views_plugin_style_summary {
-  function option_definition() {
-    $options = parent::option_definition();
-    $options['type'] = array('default' => 'line');
-    $options['size'] = array('default' => '400x200');
-    $options['xaxis'] = array('default' => 'auto');
-    $options['yaxis'] = array('default' => 'auto');
-    $options['reverse'] = array('default' => '1');
-    $options['pad_y'] = array('default' => '1');
-    return $options;
-  }
+class flot_views_plugin_summary_style extends flot_views_plugin_style {
 
-  function options_form(&$form, &$form_state) {
-    // parent::options_form($form, $form_state);
+  function preprocess(&$vars) {
+    $view = $this->view;
+    $argument = $view->argument[$view->build_info['summary_level']];
+    $options = $this->options;
 
-    $form['type'] = array(
-      '#type' => 'select',
-      '#title' => t('Graph type'),
-      '#options' => array('line' => t('Line'), 'bar' => t('Bar'), 'point' => t('Point')),
-      '#description' => t("Choose the type of chart you would like to display."),
-      '#default_value' => $this->options['type'],
-    );
+    // Parameters
+    $type = !empty($options['type']) ? $options['type'] : 'line';
+    $size = !empty($options['size']) ? explode('x', $options['size']) : array('200','100');
+    $reverse = !empty($options['reverse']) ? $options['reverse'] : 1;
+    $pad_y = !empty($options['pad_y']) ? $options['pad_y'] : 1;
 
-    $form['size'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Size'),
-      '#description' => t("Enter the dimensions for the chart. Format: WIDTHxHEIGHT (e.g. 200x100)"),
-      '#default_value' => $this->options['size'],
-    );
+    // DOM element options
+    $element = array();
+    $element['style'] = "width:{$size[0]}px; height:{$size[1]}px;";
+    $vars['element'] = $element;
 
-    $yaxis_options =
-    $xaxis_options = array(
-      'auto' => t('Auto generate'),
-      'endpoints' => t('Endpoints only'),
-    );
-    for ($i = 3; $i < 10; $i++) {
-      $yaxis_options[$i] = t('Granularity: !count ticks', array('!count' => $i));
+    $series = array();
+    $range = array('min' => NULL, 'max' => NULL);
+    $ticks = array();
+
+    $vars['rows'] = $reverse ? array_reverse($vars['rows']) : $vars['rows'];
+
+    // Iterate over results to build data and ticks
+    foreach ($vars['rows'] as $id => $row) {
+      $vars['rows'][$id]->link = $argument->summary_name($row);
+      $vars['rows'][$id]->count = intval($row->{$argument->count_alias});
+
+      if (!empty($vars['rows'][$id]->link)) {
+        $value = $vars['rows'][$id]->count;
+
+        $series[] = array($id, $value);
+        $ticks[] = array($id, $argument->summary_name($row));
+
+        if (!isset($range['min']) || $value < $range['min']) {
+          $range['min'] = $value;
+        }
+        if (!isset($range['max']) || $value > $range['max']) {
+          $range['max'] = $value;
+        }
+      }
+      else {
+        unset($vars['rows'][$id]);
+      }
     }
-    $form['xaxis'] = array(
-      '#type' => 'select',
-      '#options'=> $xaxis_options,
-      '#title' => t('X Axis'),
-      '#default_value' => $this->options['xaxis'],
-    );
+    $series = new flotData($series);
+    $vars['data'] = array($series);
 
-    $form['yaxis'] = array(
-      '#type' => 'select',
-      '#options'=> $yaxis_options,
-      '#title' => t('Y Axis'),
-      '#default_value' => $this->options['yaxis'],
-    );
+    // Set up the type class, set axes
+    switch ($options['type']) {
+      case 'point':
+        $style = new flotStylePoint();
+        break;
+      case 'bar':
+        $style = new flotStyleBar();
+        break;
+      case 'line':
+      default:
+        $style = new flotStyleLine();
+        break;
+    }
 
-    $form['reverse'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Reverse data series'),
-      '#default_value' => $this->options['reverse'],
-    );
+    // Format Y Axis
+    $granularity = 0;
 
-    $form['pad_y'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Pad Y axis'),
-      '#description' => t('Add some breathing room to Y Axis and bottom out baseline at 0'),
-      '#default_value' => $this->options['pad_y'],
-    );
+    // If max is too small Flot barfs -- set a minimum value
+    $range['max'] = ($range['max'] < 5) ? 5 : $range['max'];
+
+  // Pad Y axis if necessary
+    if ($pad_y) {
+      $range['min'] = 0;
+      $range['max'] = floor($range['max'] + ($range['max'] * .1));
+    }
+
+    switch ($options['yaxis']) {
+      case 'endpoints':
+        $yticks = array(array($range['min'], $range['min']), array($range['max'], $range['max']));
+        $style->axis_ticks('yaxis', $yticks);
+        break;
+      case 'auto':
+        $style->axis_range('yaxis', $range);
+        break;
+      default:
+        $style->axis_range('yaxis', $range, $options['yaxis']);
+        break;
+    }
+
+    // Format X Axis
+    if ($options['xaxis'] == 'endpoints' && count($ticks) > 1) {
+      $simplified_ticks = array();
+      $simplified_ticks[] = array_shift($ticks);
+      $simplified_ticks[] = array_pop($ticks);
+      $ticks = $simplified_ticks;
+    }
+    $style->axis_ticks('xaxis', $ticks);
+
+    $vars['options'] = $style;
+
+    // We don't actually render the flot graph in the preprocess so other
+    // theme preprocessors can alter it.
   }
 }
