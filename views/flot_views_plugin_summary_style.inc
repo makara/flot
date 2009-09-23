@@ -5,7 +5,6 @@
  * Summary style plugin for flot.
  */
 class flot_views_plugin_summary_style extends flot_views_plugin_style {
-
   function preprocess(&$vars) {
     $view = $this->view;
     $argument = $view->argument[$view->build_info['summary_level']];

@@ -48,12 +48,12 @@ function flot_views_plugins() {
         'type' => 'normal',
       ),
       'flot_summary' => array(
+        'parent' => 'flot',
         'title' => t('Flot'),
         'help' => t('Displays the default summary as a flot graph.'),
         'handler' => 'flot_views_plugin_summary_style',
         'path' => drupal_get_path('module', 'flot') .'/views',
-        'parent' => 'flot_views_plugin_style',
-        'theme' => 'flot_views_style',
+        'theme' => 'flot_views_summary_style',
         'theme path' => drupal_get_path('module', 'flot') .'/views',
         'type' => 'summary', // only shows up as a summary style
         'uses options' => TRUE,
