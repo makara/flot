@@ -89,7 +89,10 @@ function flot_add_js() {
     if (!isset($path)) {
       $path = drupal_get_path('module', 'flot') .'/flot';
     }
-    drupal_set_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="'. base_path() . $path . '/excanvas.pack.js"></script><![endif]-->');
+
+    // Different versions of flot have used different packing methods. Attempt to support both.
+    $excanvas = file_exists("{$path}/excanvas.min.js") ? "{$path}/excanvas.min.js" : "{$path}/excanvas.pack.js";
+    drupal_set_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="'. base_path() . $excanvas . '"></script><![endif]-->');
     drupal_add_js($path . '/jquery.flot.js');
     drupal_add_js('if (Drupal.jsEnabled) { Drupal.flot = {}; }', 'inline');
 
