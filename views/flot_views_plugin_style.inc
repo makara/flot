@@ -40,6 +40,7 @@ class flot_views_plugin_style extends views_plugin_style {
       'endpoints' => t('Endpoints only'),
     );
     for ($i = 3; $i < 10; $i++) {
+      $xaxis_granularity[$i] = t('Granularity: !count ticks', array('!count' => $i));
       $yaxis_granularity[$i] = t('Granularity: !count ticks', array('!count' => $i));
     }
 
@@ -168,18 +169,22 @@ class flot_views_plugin_style extends views_plugin_style {
         $style->axis_range('yaxis', $range);
         break;
       default:
-        $style->axis_range('yaxis', $range, $options['yaxis']);
+        $style->axis_range('yaxis', $range, $options['y']['granularity']);
         break;
     }
 
-    // Format X Axis
-    if ($options['x']['granularity'] == 'endpoints' && count($ticks) > 1) {
-      $simplified_ticks = array();
-      $simplified_ticks[] = array_shift($ticks);
-      $simplified_ticks[] = array_pop($ticks);
-      $ticks = $simplified_ticks;
+    $domain = array(current(reset($ticks)), current(end($ticks)));
+    switch ($options['x']['granularity']) {
+      case 'endpoints':
+        $style->axis_ticks('xaxis', $domain);
+        break;
+      case 'auto':
+        $style->axis_ticks('xaxis', $ticks);
+        break;
+      default:
+        $style->axis_range('xaxis', $domain, $options['x']['granularity']);
+        break;
     }
-    $style->axis_ticks('xaxis', $ticks);
 
     $vars['options'] = $style;
   }
