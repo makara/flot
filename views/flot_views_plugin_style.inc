@@ -173,17 +173,19 @@ class flot_views_plugin_style extends views_plugin_style {
         break;
     }
 
-    $domain = array(current(reset($ticks)), current(end($ticks)));
-    switch ($options['x']['granularity']) {
-      case 'endpoints':
-        $style->axis_ticks('xaxis', $domain);
-        break;
-      case 'auto':
-        $style->axis_ticks('xaxis', $ticks);
-        break;
-      default:
-        $style->axis_range('xaxis', $domain, $options['x']['granularity']);
-        break;
+    if (count($ticks) > 1) {
+      $domain = array(reset($ticks), end($ticks));
+      switch ($options['x']['granularity']) {
+        case 'endpoints':
+          $style->axis_ticks('xaxis', $domain);
+          break;
+        case 'auto':
+          $style->axis_ticks('xaxis', $ticks);
+          break;
+        default:
+          $style->axis_range('xaxis', $domain, $options['x']['granularity']);
+          break;
+      }
     }
 
     $vars['options'] = $style;

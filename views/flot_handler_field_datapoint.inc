@@ -187,8 +187,10 @@ class flot_handler_field_datapoint extends views_handler_field  {
       $filters = $this->view->display_handler->get_handlers('filter');
       foreach ($filters as $filter => $handler) {
         if (strpos(get_class($handler), '_date') !== FALSE) {
-          $min = time() + intval(strtotime($handler->value['min'], 0));
-          $max = time() + intval(strtotime($handler->value['max'], 0));
+          $min = $handler->value['min'];
+          $min = !is_numeric($min) ? time() + intval(strtotime($min, 0)) : $min;
+          $max = $handler->value['max'];
+          $max = !is_numeric($max) ? time() + intval(strtotime($max, 0)) : $max;
           $value = intval(strtotime($handler->value['value'], 0));
           switch ($handler->operator) {
             case 'between':
@@ -198,11 +200,23 @@ class flot_handler_field_datapoint extends views_handler_field  {
             case '>=':
             case '>':
               $start = $min;
-              $end = strtotime(end($result)->{$this->series_field});
+
+              // We can't count on sort order of the result set but do
+              // assume that things have been sorted.
+              $front = reset($result)->{$this->series_field};
+              $front = !is_numeric($front) ? strtotime($front) : $front;
+              $back  = end($result)->{$this->series_field};
+              $back  = !is_numeric($back) ? strtotime($back) : $back;
+              $end = $front > $back ? $front : $back;
               break;
             case '<=':
             case '<':
-              $start = strtotime($result[0]->{$this->series_field});
+              $front = reset($result)->{$this->series_field};
+              $front = !is_numeric($front) ? strtotime($front) : $front;
+              $back  = end($result)->{$this->series_field};
+              $back  = !is_numeric($back) ? strtotime($back) : $back;
+              $start = $front < $back ? $front : $back;
+
               $end = $max;
               break;
           }
