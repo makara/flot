@@ -167,8 +167,8 @@ class flot_views_plugin_style extends views_plugin_style {
       'ticks' => array(),
       'range' => array('min' => NULL, 'max' => NULL),
     );
-    $layer_names = array_filter($this->options['layers']);
     $layer_names["{$this->view->name}:{$this->view->current_display}"] = "{$this->view->name}:{$this->view->current_display}";
+    $layer_names += array_filter($this->options['layers']);
     foreach ($layer_names as $layer_name) {
       list($view_name, $display_name) = explode(':', $layer_name);
 
@@ -228,6 +228,7 @@ class flot_views_plugin_style extends views_plugin_style {
     $layers = $this->get_layers();
 
     $vars['data'] = $layers['series'];
+    $vars['titles'] = $layers['titles'];
     $range = $layers['range'];
     $ticks = $layers['ticks'];
 
