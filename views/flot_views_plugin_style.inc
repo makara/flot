@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 class flot_views_plugin_style extends views_plugin_style {
   function option_definition() {

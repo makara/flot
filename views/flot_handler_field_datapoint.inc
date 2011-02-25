@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 class flot_handler_field_datapoint extends views_handler_field  {
   protected $use_date;

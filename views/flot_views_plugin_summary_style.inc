@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Summary style plugin for flot.

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file flot-views-summary-style.tpl.php
