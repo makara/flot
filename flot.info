@@ -1,7 +1,6 @@
-name = Flot
-description = Provides an API for the flot js graphing library.
-core = 7.x
-
+name = "Flot"
+description = "Provides an API for the flot js graphing library."
+core = "7.x"
 
 files[] = flot.module
 files[] = views/flot_handler_field_datapoint.inc

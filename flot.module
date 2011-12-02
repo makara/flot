@@ -16,7 +16,7 @@ function flot_views_api() {
 function flot_theme() {
   return array(
     'flot_graph' => array(
-      'variables' => array('element' => array(), 'data' => array(), 'options' => array()),
+      'variables' => array('element' => array(), 'data' => array(), 'options' => array(), 'loader' => FALSE),
     ),
   );
 }
@@ -48,7 +48,8 @@ function theme_flot_graph($variables) {
   $element = $variables['element'];
   $data = $variables['data'];
   $options = $variables['options'];
-  // TODO Number of parameters in this theme funcion does not match number of parameters found in hook_theme.
+  $loader = $variables['loader'];
+
   static $n;
   if (!isset($element['id'])) {
     $n++;
