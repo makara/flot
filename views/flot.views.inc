@@ -14,20 +14,6 @@ function flot_views_data_alter(&$data) {
 }
 
 /**
- * Implements hook_views_handlers().
- */
-function flot_views_handlers() {
-  return array(
-    'info' => array(
-      'path' => drupal_get_path('module', 'flot') . '/views',
-    ),
-    'handlers' => array(
-      'flot_handler_field_datapoint' => array('parent' => 'views_handler_field'),
-    ),
-  );
-}
-
-/**
  * Implements hook_views_plugins().
  */
 function flot_views_plugins() {
@@ -47,7 +33,6 @@ function flot_views_plugins() {
         'type' => 'normal',
       ),
       'flot_summary' => array(
-        'parent' => 'flot',
         'title' => t('Flot'),
         'help' => t('Displays the default summary as a flot graph.'),
         'handler' => 'flot_views_plugin_summary_style',
