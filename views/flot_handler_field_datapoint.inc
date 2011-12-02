@@ -1,12 +1,14 @@
 <?php
 
-class flot_handler_field_datapoint extends views_handler_field  {
+class flot_handler_field_datapoint extends views_handler_field {
   protected $use_date;
 
   /**
    * Disable advanced render.
    */
-  function allow_advanced_render() { return FALSE; }
+  function allow_advanced_render() {
+    return FALSE;
+  }
 
   /**
    * Option defaults.
@@ -82,9 +84,9 @@ class flot_handler_field_datapoint extends views_handler_field  {
             '#title' => t('Date format'),
             '#type' => 'select',
             '#options' => array(
-              'small' => format_date(time(), 'small'),
-              'medium' => format_date(time(), 'medium'),
-              'large' => format_date(time(), 'large'),
+              'small' => format_date(REQUEST_TIME, 'short'),
+              'medium' => format_date(REQUEST_TIME, 'medium'),
+              'large' => format_date(REQUEST_TIME, 'long'),
             ),
             '#process' => array('views_process_dependency'),
             '#dependency' => array(),
@@ -187,9 +189,9 @@ class flot_handler_field_datapoint extends views_handler_field  {
       foreach ($filters as $filter => $handler) {
         if (strpos(get_class($handler), '_date') !== FALSE) {
           $min = $handler->value['min'];
-          $min = !is_numeric($min) ? time() + intval(strtotime($min, 0)) : $min;
+          $min = !is_numeric($min) ? REQUEST_TIME + intval(strtotime($min, 0)) : $min;
           $max = $handler->value['max'];
-          $max = !is_numeric($max) ? time() + intval(strtotime($max, 0)) : $max;
+          $max = !is_numeric($max) ? REQUEST_TIME + intval(strtotime($max, 0)) : $max;
           $value = intval(strtotime($handler->value['value'], 0));
           switch ($handler->operator) {
             case 'between':

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implementation of hook_views_data_alter().
+ * Implements hook_views_data_alter().
  */
 function flot_views_data_alter(&$data) {
   $data['views']['datapoint'] = array(
@@ -14,7 +14,7 @@ function flot_views_data_alter(&$data) {
 }
 
 /**
- * Implementation of hook_views_handlers().
+ * Implements hook_views_handlers().
  */
 function flot_views_handlers() {
   return array(
@@ -28,7 +28,7 @@ function flot_views_handlers() {
 }
 
 /**
- * Implementation of hook_views_plugins().
+ * Implements hook_views_plugins().
  */
 function flot_views_plugins() {
   return array(
@@ -38,8 +38,8 @@ function flot_views_plugins() {
         'help' => t('Displays the result set as a flot graph.'),
         'handler' => 'flot_views_plugin_style',
         'theme' => 'flot_views_style',
-        'theme path' => drupal_get_path('module', 'flot') .'/views',
-        'path' => drupal_get_path('module', 'flot') .'/views',
+        'theme path' => drupal_get_path('module', 'flot') . '/views',
+        'path' => drupal_get_path('module', 'flot') . '/views',
         'even empty' => TRUE,
         'uses row plugin' => FALSE,
         'uses fields' => TRUE,
@@ -51,9 +51,9 @@ function flot_views_plugins() {
         'title' => t('Flot'),
         'help' => t('Displays the default summary as a flot graph.'),
         'handler' => 'flot_views_plugin_summary_style',
-        'path' => drupal_get_path('module', 'flot') .'/views',
+        'path' => drupal_get_path('module', 'flot') . '/views',
         'theme' => 'flot_views_summary_style',
-        'theme path' => drupal_get_path('module', 'flot') .'/views',
+        'theme path' => drupal_get_path('module', 'flot') . '/views',
         'type' => 'summary', // only shows up as a summary style
         'uses options' => TRUE,
       ),

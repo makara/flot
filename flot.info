@@ -1,4 +1,9 @@
 name = Flot
 description = Provides an API for the flot js graphing library.
-core = 6.x
+core = 7.x
 
+
+files[] = flot.module
+files[] = views/flot_handler_field_datapoint.inc
+files[] = views/flot_views_plugin_style.inc
+files[] = views/flot_views_plugin_summary_style.inc

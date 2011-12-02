@@ -29,7 +29,7 @@ class flot_views_plugin_style extends views_plugin_style {
 
     // Generate label fields
     $label_options = array(
-      '' => '< '. t('No labels') .' >',
+      '' => '< ' . t('No labels') . ' >',
       'default' => t('Default (from data points)'),
     );
 
@@ -53,13 +53,13 @@ class flot_views_plugin_style extends views_plugin_style {
     );
     $form['x']['label'] = array(
       '#type' => 'select',
-      '#options'=> $label_options,
+      '#options' => $label_options,
       '#title' => t('Labels'),
       '#default_value' => $this->options['x']['label'],
     );
     $form['x']['granularity'] = array(
       '#type' => 'select',
-      '#options'=> $xaxis_granularity,
+      '#options' => $xaxis_granularity,
       '#title' => t('Granularity'),
       '#default_value' => $this->options['x']['granularity'],
     );
@@ -73,13 +73,13 @@ class flot_views_plugin_style extends views_plugin_style {
     );
     $form['y']['label'] = array(
       '#type' => 'select',
-      '#options'=> $label_options,
+      '#options' => $label_options,
       '#title' => t('Labels'),
       '#default_value' => $this->options['y']['label'],
     );
     $form['y']['granularity'] = array(
       '#type' => 'select',
-      '#options'=> $yaxis_granularity,
+      '#options' => $yaxis_granularity,
       '#title' => t('Granularity'),
       '#default_value' => $this->options['y']['granularity'],
     );
@@ -221,7 +221,7 @@ class flot_views_plugin_style extends views_plugin_style {
 
     // Parameters
     $type = !empty($options['type']) ? $options['type'] : 'line';
-    $size = !empty($options['size']) ? explode('x', $options['size']) : array('200','100');
+    $size = !empty($options['size']) ? explode('x', $options['size']) : array('200', '100');
 
     // DOM element options
     $element = array();

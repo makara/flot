@@ -11,7 +11,7 @@ class flot_views_plugin_summary_style extends flot_views_plugin_style {
 
     // Parameters
     $type = !empty($options['type']) ? $options['type'] : 'line';
-    $size = !empty($options['size']) ? explode('x', $options['size']) : array('200','100');
+    $size = !empty($options['size']) ? explode('x', $options['size']) : array('200', '100');
     $reverse = !empty($options['reverse']) ? $options['reverse'] : 1;
     $pad_y = !empty($options['pad_y']) ? $options['pad_y'] : 1;
 
@@ -71,7 +71,7 @@ class flot_views_plugin_summary_style extends flot_views_plugin_style {
     // If max is too small Flot barfs -- set a minimum value
     $range['max'] = ($range['max'] < 5) ? 5 : $range['max'];
 
-  // Pad Y axis if necessary
+    // Pad Y axis if necessary
     if ($pad_y) {
       $range['min'] = 0;
       $range['max'] = floor($range['max'] + ($range['max'] * .1));
