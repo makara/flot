@@ -66,22 +66,20 @@ function theme_flot_graph($variables) {
     $extra = '';
     $id = str_replace('-', '_', $element['id']);
 
+    // TODO: not in use.
     if ($loader) {
       $json_data = function_exists('json_encode') ? json_encode($data) : drupal_json_encode($data);
       $extra = "Drupal.flot.{$id}_data = {$json_data}; {$loader}";
       $data = array();
     }
 
-    $json_data = function_exists('json_encode') ? json_encode($data) : drupal_json_encode($data);
-    $json_options = function_exists('json_encode') ? json_encode($options) : drupal_json_encode($options);
-    $data = "(function ($) {
-      $(document).ready(function() {
-        Drupal.flot.{$id} = $.plot($('#{$element['id']}'), {$json_data}, {$json_options});
-        {$extra}
-      });
-    })(jQuery);";
-    drupal_add_js($data, array('type' => 'inline', 'scope' => JS_DEFAULT));
+    $settings = array();
+    $settings['data'] = $data;
+    $settings['options'] = $options;
+    drupal_add_js(array('flot' => array($element['id'] => $settings)), 'setting');
   }
+
+  // TODO: convert to a render-able element.
   return '<div ' . drupal_attributes($element) . '> </div>';
 }
 
@@ -98,11 +96,13 @@ function flot_add_js() {
       $path = drupal_get_path('module', 'flot') . '/flot';
     }
 
+    // TODO.
     // Different versions of flot have used different packing methods. Attempt to support both.
-    $excanvas = file_exists("{$path}/excanvas.min.js") ? "{$path}/excanvas.min.js" : "{$path}/excanvas.pack.js";
-    drupal_add_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="' . base_path() . $excanvas . '"></script><![endif]-->', $key = NULL /* TODO Set this variable. */);
+//     $excanvas = file_exists("{$path}/excanvas.min.js") ? "{$path}/excanvas.min.js" : "{$path}/excanvas.pack.js";
+//     drupal_add_html_head('<!--[if IE]><script language="javascript" type="text/javascript" src="' . base_path() . $excanvas . '"></script><![endif]-->', $key = NULL /* TODO Set this variable. */);
+
     drupal_add_js($path . '/jquery.flot.js');
-    drupal_add_js('(function ($) { Drupal.flot = Drupal.flot || {}; })(jQuery);', array('type' => 'inline', 'scope' => JS_DEFAULT));
+    drupal_add_js(drupal_get_path('module', 'flot') . '/flot.js');
 
     $added = true;
   }
