@@ -68,7 +68,7 @@ function theme_flot_graph($variables) {
 
     // TODO: not in use.
     if ($loader) {
-      $json_data = function_exists('json_encode') ? json_encode($data) : drupal_json_encode($data);
+      $json_data = drupal_json_encode($data);
       $extra = "Drupal.flot.{$id}_data = {$json_data}; {$loader}";
       $data = array();
     }
